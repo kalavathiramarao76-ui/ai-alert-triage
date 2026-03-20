@@ -115,7 +115,13 @@ export default function TriagePage() {
 
       {triaged.length === 0 ? (
         <div className="text-center py-20 border border-zinc-800 rounded-lg bg-zinc-900/30">
-          <div className="text-4xl mb-4">📭</div>
+          <div className="mx-auto w-20 h-20 mb-6">
+            <svg className="w-20 h-20 text-zinc-700" fill="none" viewBox="0 0 80 80" stroke="currentColor" strokeWidth={1}>
+              <path d="M20 60L40 20L60 60H20Z" />
+              <line x1="40" y1="35" x2="40" y2="48" strokeWidth={2} />
+              <circle cx="40" cy="54" r="1.5" fill="currentColor" />
+            </svg>
+          </div>
           <h3 className="text-lg font-medium text-white mb-2">No triaged alerts yet</h3>
           <p className="text-sm text-zinc-400 mb-4">
             Go to the Dashboard to submit alerts for AI triage

@@ -92,7 +92,7 @@ export default function MetricsPanel({ metrics }: { metrics: DashboardMetrics })
 
 function StatCard({ title, value, color }: { title: string; value: string | number; color: string }) {
   return (
-    <div className="border border-zinc-800 rounded-lg p-4 bg-zinc-900/50">
+    <div className="border border-zinc-800 rounded-lg p-4 bg-zinc-900/50 card-hover-lift">
       <div className="text-xs text-zinc-500 uppercase tracking-wider">{title}</div>
       <div className={`text-2xl font-bold mt-1 ${color}`}>{value}</div>
     </div>

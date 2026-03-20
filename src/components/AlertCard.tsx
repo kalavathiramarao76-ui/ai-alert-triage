@@ -13,9 +13,12 @@ interface AlertCardProps {
 }
 
 export default function AlertCard({ alert, selected, onSelect, expanded, onToggleExpand }: AlertCardProps) {
+  const isNew = alert.status === 'new' || alert.status === 'triaged';
   return (
     <div
-      className={`border rounded-lg p-4 transition-all cursor-pointer ${
+      className={`border rounded-lg p-4 transition-all cursor-pointer card-hover-lift ${
+        isNew && !alert.isNoise ? 'alert-pulse-new' : ''
+      } ${
         alert.isNoise
           ? 'border-zinc-800 bg-zinc-900/30 opacity-60'
           : selected

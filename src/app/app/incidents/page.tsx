@@ -59,7 +59,17 @@ ${incident.timeline.map((t) => `- ${t.timestamp}: ${t.event}`).join('\n')}`;
 
       {incidents.length === 0 ? (
         <div className="text-center py-20 border border-zinc-800 rounded-lg bg-zinc-900/30">
-          <div className="text-4xl mb-4">📋</div>
+          <div className="mx-auto w-20 h-20 mb-6">
+            <svg className="w-20 h-20 text-zinc-700" fill="none" viewBox="0 0 80 80" stroke="currentColor" strokeWidth={1}>
+              <rect x="16" y="12" width="48" height="56" rx="4" />
+              <line x1="26" y1="28" x2="54" y2="28" strokeWidth={2} />
+              <line x1="26" y1="38" x2="48" y2="38" />
+              <line x1="26" y1="46" x2="42" y2="46" />
+              <line x1="26" y1="54" x2="50" y2="54" />
+              <circle cx="56" cy="56" r="10" className="text-green-500/30" fill="currentColor" stroke="none" />
+              <path d="M52 56l3 3 5-5" className="text-green-500" strokeWidth={2} />
+            </svg>
+          </div>
           <h3 className="text-lg font-medium text-white mb-2">No incidents yet</h3>
           <p className="text-sm text-zinc-400 mb-4">
             Select triaged alerts and create an incident from the Triage view

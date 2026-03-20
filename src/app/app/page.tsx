@@ -8,16 +8,60 @@ import AlertInbox from '@/components/AlertInbox';
 import MetricsPanel from '@/components/MetricsPanel';
 import AlertCard from '@/components/AlertCard';
 
+function SkeletonCard() {
+  return (
+    <div className="border border-zinc-800 rounded-lg p-4 space-y-3">
+      <div className="flex items-center gap-2">
+        <div className="skeleton h-5 w-20" />
+        <div className="skeleton h-5 w-16" />
+        <div className="skeleton h-5 w-12" />
+      </div>
+      <div className="skeleton h-4 w-3/4" />
+      <div className="skeleton h-3 w-full" />
+      <div className="skeleton h-3 w-2/3" />
+    </div>
+  );
+}
+
+function EmptyState() {
+  return (
+    <div className="text-center py-16 border border-zinc-800 rounded-lg bg-zinc-900/30">
+      <div className="mx-auto w-20 h-20 mb-6 relative">
+        <svg className="w-20 h-20 text-zinc-700" fill="none" viewBox="0 0 80 80" stroke="currentColor" strokeWidth={1}>
+          <rect x="10" y="16" width="60" height="48" rx="4" />
+          <path d="M10 28h60" />
+          <circle cx="20" cy="22" r="2" fill="currentColor" />
+          <circle cx="28" cy="22" r="2" fill="currentColor" />
+          <circle cx="36" cy="22" r="2" fill="currentColor" />
+          <rect x="20" y="36" width="40" height="4" rx="2" className="text-zinc-600" fill="currentColor" />
+          <rect x="20" y="46" width="28" height="4" rx="2" className="text-zinc-600" fill="currentColor" />
+        </svg>
+        <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+          <svg className="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+      </div>
+      <h3 className="text-lg font-medium text-white mb-2">No alerts yet</h3>
+      <p className="text-sm text-zinc-400 max-w-sm mx-auto">
+        Paste alert JSON or use the form above to submit alerts for AI-powered triage and classification.
+      </p>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const [triaged, setTriaged] = useState<TriagedAlert[]>([]);
   const [groups, setGroups] = useState<AlertGroup[]>([]);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedAlerts, setExpandedAlerts] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     setTriaged(storage.getTriagedAlerts());
     setGroups(storage.getGroups());
+    setInitialLoading(false);
   }, []);
 
   const handleSubmit = useCallback(async (alerts: Partial<RawAlert>[]) => {
@@ -131,9 +175,23 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 space-y-6">
           <AlertInbox onSubmit={handleSubmit} loading={loading} />
 
+          {/* Loading skeletons */}
+          {(loading || initialLoading) && triaged.length === 0 && (
+            <div className="space-y-2">
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </div>
+          )}
+
+          {/* Empty state */}
+          {!loading && !initialLoading && triaged.length === 0 && (
+            <EmptyState />
+          )}
+
           {/* Groups */}
           {groups.length > 0 && (
-            <div className="border border-zinc-800 rounded-lg bg-zinc-900/50 p-4">
+            <div className="border border-zinc-800 rounded-lg bg-zinc-900/50 p-4 card-hover-lift">
               <h2 className="text-sm font-semibold text-white mb-3">
                 Alert Groups ({groups.length})
               </h2>

@@ -19,13 +19,32 @@ export const metadata: Metadata = {
   keywords: ["SRE", "DevOps", "alert management", "incident response", "AI triage", "PagerDuty", "Datadog"],
 };
 
+// FOUC prevention script - runs before paint
+const themeScript = `
+(function() {
+  try {
+    var theme = localStorage.getItem('at-theme') || 'dark';
+    var resolved = theme;
+    if (theme === 'system') {
+      resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', resolved);
+    document.documentElement.classList.add(resolved === 'light' ? 'light' : 'dark');
+    document.documentElement.classList.remove(resolved === 'light' ? 'dark' : 'light');
+  } catch(e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased font-[family-name:var(--font-geist-sans)] bg-zinc-950 text-zinc-100`}>
         {children}
       </body>

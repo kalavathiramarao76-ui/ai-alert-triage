@@ -12,7 +12,7 @@ export default function IncidentCard({ incident }: { incident: Incident }) {
   };
 
   return (
-    <div className="border border-zinc-800 rounded-lg bg-zinc-900/50 overflow-hidden">
+    <div className="border border-zinc-800 rounded-lg bg-zinc-900/50 overflow-hidden card-hover-lift">
       <div className="border-b border-zinc-800 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <PriorityBadge priority={incident.priority} />
