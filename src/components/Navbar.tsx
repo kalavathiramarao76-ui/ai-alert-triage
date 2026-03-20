@@ -2,18 +2,29 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import ThemeToggle from './ThemeToggle';
 import NotificationCenter from './NotificationCenter';
 import { CommandPaletteTrigger } from './CommandPalette';
+import { favorites } from '@/lib/favorites';
 
 const navItems = [
   { href: '/app', label: 'Dashboard', icon: '◈' },
   { href: '/app/triage', label: 'Triage', icon: '⚡' },
   { href: '/app/incidents', label: 'Incidents', icon: '🔥' },
+  { href: '/app/favorites', label: 'Favorites', icon: '⭐' },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
+  const [favCount, setFavCount] = useState(0);
+
+  useEffect(() => {
+    setFavCount(favorites.getCount());
+    const handler = () => setFavCount(favorites.getCount());
+    window.addEventListener('favorites-changed', handler);
+    return () => window.removeEventListener('favorites-changed', handler);
+  }, []);
 
   return (
     <nav className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm sticky top-0 z-50">
@@ -42,6 +53,11 @@ export default function Navbar() {
                   >
                     <span className="mr-1.5">{item.icon}</span>
                     {item.label}
+                    {item.href === '/app/favorites' && favCount > 0 && (
+                      <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-yellow-500/20 text-yellow-400 text-[10px] font-bold">
+                        {favCount}
+                      </span>
+                    )}
                   </Link>
                 );
               })}

@@ -21,6 +21,7 @@ const commands: Command[] = [
   { id: 'roles', label: 'Roles & Permissions', icon: '🛡️', href: '/app/settings/roles', keywords: ['roles', 'permissions', 'rbac', 'access'], category: 'settings' },
   { id: 'audit', label: 'Audit Log', icon: '📋', href: '/app/settings/audit', keywords: ['audit', 'log', 'history', 'trail'], category: 'settings' },
   { id: 'create-incident', label: 'Create Incident', icon: '🚨', href: '/app/triage', keywords: ['create', 'incident', 'new', 'report'], category: 'navigation' },
+  { id: 'favorites', label: 'Favorites', icon: '⭐', href: '/app/favorites', keywords: ['favorites', 'starred', 'saved', 'bookmarks'], category: 'navigation' },
 ];
 
 const RECENT_KEY = 'at-cmd-recent';

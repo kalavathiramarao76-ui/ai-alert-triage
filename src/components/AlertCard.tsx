@@ -3,6 +3,7 @@
 import { TriagedAlert } from '@/types';
 import PriorityBadge from './PriorityBadge';
 import CategoryBadge from './CategoryBadge';
+import FavoriteButton from './FavoriteButton';
 
 interface AlertCardProps {
   alert: TriagedAlert;
@@ -97,6 +98,14 @@ export default function AlertCard({ alert, selected, onSelect, expanded, onToggl
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          <FavoriteButton
+            id={alert.id}
+            type="alert"
+            title={alert.title}
+            priority={alert.priority}
+            category={alert.category}
+            timestamp={alert.timestamp}
+          />
           <span className="text-xs text-zinc-500">
             {new Date(alert.timestamp).toLocaleTimeString()}
           </span>

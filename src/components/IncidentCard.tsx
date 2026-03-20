@@ -2,6 +2,7 @@
 
 import { Incident } from '@/types';
 import PriorityBadge from './PriorityBadge';
+import FavoriteButton from './FavoriteButton';
 
 export default function IncidentCard({ incident }: { incident: Incident }) {
   const statusColors: Record<string, string> = {
@@ -20,9 +21,18 @@ export default function IncidentCard({ incident }: { incident: Incident }) {
             {incident.status}
           </span>
         </div>
-        <span className="text-xs text-zinc-500">
-          {new Date(incident.createdAt).toLocaleString()}
-        </span>
+        <div className="flex items-center gap-2">
+          <FavoriteButton
+            id={incident.id}
+            type="incident"
+            title={incident.title}
+            priority={incident.priority}
+            timestamp={incident.createdAt}
+          />
+          <span className="text-xs text-zinc-500">
+            {new Date(incident.createdAt).toLocaleString()}
+          </span>
+        </div>
       </div>
 
       <div className="p-4 space-y-4">
