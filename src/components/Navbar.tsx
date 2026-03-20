@@ -12,6 +12,7 @@ const navItems = [
   { href: '/app', label: 'Dashboard', icon: '◈' },
   { href: '/app/triage', label: 'Triage', icon: '⚡' },
   { href: '/app/incidents', label: 'Incidents', icon: '🔥' },
+  { href: '/app/analytics', label: 'Analytics', icon: '📊' },
   { href: '/app/favorites', label: 'Favorites', icon: '⭐' },
 ];
 

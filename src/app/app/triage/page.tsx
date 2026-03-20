@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { TriagedAlert, Priority, Category } from '@/types';
 import { storage } from '@/lib/storage';
+import { analytics } from '@/lib/analytics';
 import AlertCard from '@/components/AlertCard';
 import Link from 'next/link';
 
@@ -80,6 +81,7 @@ export default function TriagePage() {
           timeline: data.incident.timeline || [],
         };
         storage.addIncident(incident);
+        analytics.trackIncidentCreated();
         setSelected(new Set());
         window.location.href = '/app/incidents';
       }

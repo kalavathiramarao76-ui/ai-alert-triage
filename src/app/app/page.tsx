@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { RawAlert, TriagedAlert, AlertGroup } from '@/types';
 import { storage } from '@/lib/storage';
+import { analytics } from '@/lib/analytics';
 import { generateMockMetrics } from '@/lib/mock-data';
 import AlertInbox from '@/components/AlertInbox';
 import MetricsPanel from '@/components/MetricsPanel';
@@ -67,6 +68,7 @@ export default function DashboardPage() {
   const handleSubmit = useCallback(async (alerts: Partial<RawAlert>[]) => {
     setLoading(true);
     setError(null);
+    const triageStart = Date.now();
 
     try {
       const response = await fetch('/api/triage', {
@@ -117,6 +119,13 @@ export default function DashboardPage() {
 
       storage.addTriagedAlerts(triagedAlerts);
       storage.addGroups(newGroups);
+
+      // Track analytics
+      const triageTimeMs = Date.now() - triageStart;
+      const categories = triagedAlerts.map((a) => a.category || 'app');
+      analytics.trackTriage(triagedAlerts.length, categories, triageTimeMs);
+      const noiseCount = triagedAlerts.filter((a) => a.isNoise).length;
+      if (noiseCount > 0) analytics.trackNoiseFiltered(noiseCount);
 
       setTriaged((prev) => [...triagedAlerts, ...prev]);
       setGroups((prev) => [...newGroups, ...prev]);
