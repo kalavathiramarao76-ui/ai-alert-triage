@@ -262,6 +262,26 @@ html[data-theme="light"] .notification-panel-enter {
   animation: auditStagger 0.35s ease-out both;
 }
 
+/* ─── Command palette enter animation ─── */
+@keyframes cmdPaletteEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.cmd-palette-enter {
+  animation: cmdPaletteEnter 0.15s ease-out;
+}
+
+/* ─── Light theme command palette overrides ─── */
+html[data-theme="light"] .cmd-palette-enter {
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

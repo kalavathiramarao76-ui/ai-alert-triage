@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import ThemeToggle from './ThemeToggle';
 import NotificationCenter from './NotificationCenter';
+import { CommandPaletteTrigger } from './CommandPalette';
 
 const navItems = [
   { href: '/app', label: 'Dashboard', icon: '◈' },
@@ -47,6 +48,7 @@ export default function Navbar() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <CommandPaletteTrigger />
             <NotificationCenter />
             <ThemeToggle />
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20">

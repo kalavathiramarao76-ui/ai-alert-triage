@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Incident } from '@/types';
 import { storage } from '@/lib/storage';
 import IncidentCard from '@/components/IncidentCard';
+import ShareIncident from '@/components/ShareIncident';
 import Link from 'next/link';
 
 export default function IncidentsPage() {
@@ -97,6 +98,7 @@ ${incident.timeline.map((t) => `- ${t.timestamp}: ${t.event}`).join('\n')}`;
                   <option value="mitigated">Mitigated</option>
                   <option value="resolved">Resolved</option>
                 </select>
+                <ShareIncident incident={incident} />
                 <button
                   onClick={() => copyToClipboard(incident)}
                   className="px-2 py-1 text-xs text-zinc-400 hover:text-green-400 border border-zinc-800 hover:border-green-500/30 rounded transition-colors"
