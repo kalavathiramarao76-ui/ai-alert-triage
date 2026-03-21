@@ -17,60 +17,68 @@ export default function AlertCard({ alert, selected, onSelect, expanded, onToggl
   const isNew = alert.status === 'new' || alert.status === 'triaged';
   return (
     <div
-      className={`border rounded-lg p-4 transition-all cursor-pointer card-hover-lift ${
+      className={`group border rounded-2xl p-5 transition-all cursor-pointer ${
         isNew && !alert.isNoise ? 'alert-pulse-new' : ''
       } ${
         alert.isNoise
-          ? 'border-zinc-800 bg-zinc-900/30 opacity-60'
+          ? 'border-zinc-800/40 bg-zinc-900/10 opacity-50'
           : selected
-          ? 'border-green-500/50 bg-green-500/5'
-          : 'border-zinc-800 bg-zinc-900/50 hover:border-zinc-700'
+          ? 'border-emerald-500/40 bg-emerald-500/5'
+          : 'border-zinc-800/50 bg-zinc-900/20 hover:border-zinc-700/60'
       }`}
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3 flex-1 min-w-0">
           {onSelect && (
             <input
               type="checkbox"
               checked={selected}
               onChange={() => onSelect(alert.id)}
-              className="mt-1 rounded border-zinc-600 bg-zinc-800 text-green-500 focus:ring-green-500 focus:ring-offset-0"
+              className="mt-1.5 rounded border-zinc-600 bg-zinc-800 text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0"
             />
           )}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap mb-1">
+            <div className="flex items-center gap-2 flex-wrap mb-2">
               <PriorityBadge priority={alert.priority} />
               <CategoryBadge category={alert.category} />
               {alert.isNoise && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-zinc-700/50 text-zinc-400 border border-zinc-600">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-medium bg-zinc-800/60 text-zinc-500 border border-zinc-700/40">
                   Noise
                 </span>
               )}
-              <span className="text-xs text-zinc-500">{alert.source}</span>
+              <span className="text-[11px] text-zinc-600 font-mono">{alert.source}</span>
             </div>
-            <h3 className="text-sm font-medium text-white truncate">{alert.title}</h3>
-            <p className="text-xs text-zinc-400 mt-1 line-clamp-2">{alert.description}</p>
+            <h3 className="text-sm font-medium text-white leading-snug group-hover:text-emerald-400 transition-colors">
+              {alert.title}
+            </h3>
+            <p className="text-xs text-zinc-500 mt-1.5 line-clamp-2 leading-relaxed">{alert.description}</p>
 
             {expanded && (
-              <div className="mt-3 space-y-3 border-t border-zinc-800 pt-3">
-                <div>
-                  <span className="text-xs font-medium text-zinc-300">Affected Service:</span>
-                  <span className="text-xs text-green-400 ml-2">{alert.affectedService}</span>
+              <div className="mt-4 space-y-4 border-t border-zinc-800/40 pt-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider">Service</span>
+                    <p className="text-sm text-emerald-400 font-mono mt-0.5">{alert.affectedService}</p>
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider">Confidence</span>
+                    <p className="text-sm text-white font-mono mt-0.5">{alert.confidence}%</p>
+                  </div>
                 </div>
 
                 {alert.isNoise && alert.noiseReason && (
                   <div>
-                    <span className="text-xs font-medium text-zinc-300">Noise Reason:</span>
-                    <p className="text-xs text-zinc-400 mt-0.5">{alert.noiseReason}</p>
+                    <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider">Noise Reason</span>
+                    <p className="text-xs text-zinc-400 mt-1 leading-relaxed">{alert.noiseReason}</p>
                   </div>
                 )}
 
                 <div>
-                  <span className="text-xs font-medium text-zinc-300">Suggested Actions:</span>
-                  <ul className="mt-1 space-y-1">
+                  <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider">Suggested Actions</span>
+                  <ul className="mt-2 space-y-1.5">
                     {alert.suggestedActions.map((action, i) => (
-                      <li key={i} className="text-xs text-zinc-400 flex items-start gap-1.5">
-                        <span className="text-green-500 mt-0.5">→</span>
+                      <li key={i} className="text-xs text-zinc-400 flex items-start gap-2 leading-relaxed">
+                        <span className="text-emerald-500/70 mt-0.5 shrink-0">&rarr;</span>
                         {action}
                       </li>
                     ))}
@@ -78,20 +86,16 @@ export default function AlertCard({ alert, selected, onSelect, expanded, onToggl
                 </div>
 
                 <div>
-                  <span className="text-xs font-medium text-zinc-300">Escalation:</span>
-                  <p className="text-xs text-zinc-400 mt-0.5">{alert.escalationPath}</p>
+                  <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider">Escalation</span>
+                  <p className="text-xs text-zinc-400 mt-1">{alert.escalationPath}</p>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-zinc-500">
-                    Confidence: <span className="text-green-400">{alert.confidence}%</span>
-                  </span>
-                  {alert.duplicateGroupId && (
-                    <span className="text-xs text-zinc-500">
-                      Group: <span className="text-blue-400">{alert.duplicateGroupId}</span>
-                    </span>
-                  )}
-                </div>
+                {alert.duplicateGroupId && (
+                  <div>
+                    <span className="text-[10px] font-medium text-zinc-600 uppercase tracking-wider">Group</span>
+                    <p className="text-xs text-blue-400 font-mono mt-0.5">{alert.duplicateGroupId}</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -106,8 +110,8 @@ export default function AlertCard({ alert, selected, onSelect, expanded, onToggl
             category={alert.category}
             timestamp={alert.timestamp}
           />
-          <span className="text-xs text-zinc-500">
-            {new Date(alert.timestamp).toLocaleTimeString()}
+          <span className="text-[11px] text-zinc-600 font-mono tabular-nums">
+            {new Date(alert.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
           {onToggleExpand && (
             <button
@@ -115,9 +119,17 @@ export default function AlertCard({ alert, selected, onSelect, expanded, onToggl
                 e.stopPropagation();
                 onToggleExpand(alert.id);
               }}
-              className="text-zinc-500 hover:text-white transition-colors p-1"
+              className="text-zinc-600 hover:text-white transition-colors p-1 rounded-lg hover:bg-zinc-800/50"
             >
-              {expanded ? '▾' : '▸'}
+              <svg
+                className={`w-4 h-4 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
           )}
         </div>
