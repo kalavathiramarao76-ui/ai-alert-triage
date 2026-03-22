@@ -10,7 +10,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <Navbar />
       <CommandPalette />
       <OnboardingTour />
-      <main className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-10 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-10 py-6 sm:py-8">
         <ErrorBoundary>
           {children}
         </ErrorBoundary>

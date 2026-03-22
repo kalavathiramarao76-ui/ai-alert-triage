@@ -430,3 +430,90 @@ html[data-theme="light"] .cmd-palette-enter {
     text-wrap: balance;
   }
 }
+
+/* ─── Mobile responsive polish (320px-430px) ─── */
+
+/* Prevent horizontal overflow */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Responsive text scaling for landing page */
+@media (max-width: 430px) {
+  /* Hero heading scales down for small screens */
+  .landing-page h1 {
+    font-size: clamp(2.25rem, 10vw, 4.5rem) !important;
+    line-height: 1 !important;
+  }
+
+  /* Section headings scale down */
+  .landing-page h2 {
+    font-size: clamp(1.75rem, 8vw, 3rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Landing section padding tightened */
+  .landing-page section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Bottom CTA smaller */
+  .landing-page .fade-section h2 {
+    font-size: clamp(1.75rem, 8vw, 3.5rem) !important;
+  }
+
+  /* Stats grid: 2 cols stays, text scales */
+  .landing-page .font-mono {
+    font-size: clamp(1.5rem, 6vw, 2.25rem);
+  }
+
+  /* Terminal demo: smaller font */
+  .landing-page .font-mono.text-sm {
+    font-size: 0.75rem;
+  }
+}
+
+/* Ensure touch targets are 44px minimum */
+@media (max-width: 767px) {
+  button, a, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Nav link padding */
+  nav a, nav button {
+    padding: 0.625rem 0.75rem;
+  }
+
+  /* App layout: tighter padding on mobile */
+  .landing-page header .max-w-5xl {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+/* App pages responsive text */
+@media (max-width: 430px) {
+  /* Dashboard heading */
+  .animate-fade-in h1 {
+    font-size: clamp(1.75rem, 8vw, 3rem) !important;
+  }
+
+  /* Ensure cards don't overflow */
+  .animate-fade-in .rounded-2xl {
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  /* Alert card text wrapping */
+  .animate-fade-in .font-mono {
+    font-size: 0.75rem;
+    word-break: break-all;
+  }
+
+  /* Tighter grid gap on small screens */
+  .animate-fade-in .grid {
+    gap: 0.5rem;
+  }
+}

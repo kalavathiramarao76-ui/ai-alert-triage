@@ -224,7 +224,7 @@ export default function LandingPage() {
       </header>
 
       {/* ── Hero ── */}
-      <section className="relative pt-40 pb-32 px-6">
+      <section className="relative pt-28 sm:pt-40 pb-20 sm:pb-32 px-4 sm:px-6">
         {/* Subtle top gradient accent */}
         <div className="absolute inset-x-0 top-0 h-[600px] bg-gradient-to-b from-emerald-950/20 via-transparent to-transparent pointer-events-none" />
 
@@ -232,7 +232,7 @@ export default function LandingPage() {
           <p className="text-xs uppercase tracking-[0.25em] text-zinc-500 font-mono mb-8">
             Intelligent alert triage for SRE teams
           </p>
-          <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95] text-balance">
+          <h1 className="text-4xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95] text-balance">
             <LetterReveal text="Triage alerts in" stagger={30} />
             <br />
             <span className="text-emerald-400"><LetterReveal text="seconds" stagger={30} delay={500} /></span><LetterReveal text=", not hours." stagger={30} delay={720} />
@@ -507,7 +507,7 @@ export default function LandingPage() {
       {/* ── Bottom CTA ── */}
       <FadeSection className="py-40 px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
+          <h2 className="text-3xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
             Stop drowning<br />in alerts.
           </h2>
           <p className="mt-8 text-base text-zinc-500 max-w-md mx-auto">
