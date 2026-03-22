@@ -1,7 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+// ── Reduced motion check ─────────────────────────────────────────────
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduced(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return reduced;
+}
 
 function useScrollFadeIn() {
   const ref = useRef<HTMLDivElement>(null);
@@ -28,6 +41,158 @@ function FadeSection({ children, className = '' }: { children: React.ReactNode; 
   return (
     <div ref={ref} className={`fade-section ${className}`}>
       {children}
+    </div>
+  );
+}
+
+// ── Letter-by-letter hero reveal ─────────────────────────────────────
+function LetterReveal({ text, className = '', stagger = 30, delay = 0 }: { text: string; className?: string; stagger?: number; delay?: number }) {
+  const reduced = usePrefersReducedMotion();
+  const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setVisible(true), delay);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [delay]);
+
+  if (reduced) return <span className={className}>{text}</span>;
+
+  return (
+    <span ref={ref} className={className} aria-label={text}>
+      {text.split('').map((char, i) => (
+        <span
+          key={i}
+          className="letter-reveal-char"
+          style={{
+            transitionDelay: visible ? `${i * stagger}ms` : '0ms',
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0)' : 'translateY(0.3em)',
+          }}
+          aria-hidden="true"
+        >
+          {char === ' ' ? '\u00A0' : char}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+// ── Stats counter animation ──────────────────────────────────────────
+function AnimatedCounter({ value, suffix = '', prefix = '' }: { value: number; suffix?: string; prefix?: string }) {
+  const [count, setCount] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  const reduced = usePrefersReducedMotion();
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStarted(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!started || reduced) {
+      if (started) setCount(value);
+      return;
+    }
+    let frame: number;
+    const duration = 800;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(eased * value));
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [started, value, reduced]);
+
+  return <span ref={ref}>{prefix}{count}{suffix}</span>;
+}
+
+// ── Terminal typing animation ────────────────────────────────────────
+function TerminalTyping({ lines, typingSpeed = 18 }: { lines: { text: string; className?: string }[]; typingSpeed?: number }) {
+  const [visibleChars, setVisibleChars] = useState(0);
+  const [started, setStarted] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const reduced = usePrefersReducedMotion();
+
+  const totalChars = lines.reduce((sum, l) => sum + l.text.length, 0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStarted(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.2 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!started) return;
+    if (reduced) { setVisibleChars(totalChars); return; }
+    let current = 0;
+    const interval = setInterval(() => {
+      current++;
+      setVisibleChars(current);
+      if (current >= totalChars) clearInterval(interval);
+    }, typingSpeed);
+    return () => clearInterval(interval);
+  }, [started, totalChars, typingSpeed, reduced]);
+
+  let charOffset = 0;
+  return (
+    <div ref={ref}>
+      {lines.map((line, i) => {
+        const lineStart = charOffset;
+        charOffset += line.text.length;
+        const charsToShow = Math.max(0, Math.min(visibleChars - lineStart, line.text.length));
+        if (charsToShow === 0 && visibleChars <= lineStart) return null;
+        return (
+          <div key={i} className={line.className || ''}>
+            {line.text.slice(0, charsToShow)}
+            {charsToShow < line.text.length && charsToShow > 0 && (
+              <span className="terminal-cursor">_</span>
+            )}
+          </div>
+        );
+      })}
+      {visibleChars >= totalChars && (
+        <div className="mt-3 text-zinc-600">
+          Done <span className="terminal-cursor">_</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -68,11 +233,11 @@ export default function LandingPage() {
             Intelligent alert triage for SRE teams
           </p>
           <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95] text-balance">
-            Triage alerts in
+            <LetterReveal text="Triage alerts in" stagger={30} />
             <br />
-            <span className="text-emerald-400">seconds</span>, not hours.
+            <span className="text-emerald-400"><LetterReveal text="seconds" stagger={30} delay={500} /></span><LetterReveal text=", not hours." stagger={30} delay={720} />
           </h1>
-          <p className="mt-8 text-base sm:text-lg text-zinc-500 max-w-xl mx-auto leading-relaxed">
+          <p className="mt-8 text-base sm:text-lg text-zinc-500 max-w-xl mx-auto leading-relaxed hero-subtitle">
             AI classifies, deduplicates, and prioritizes your PagerDuty, Datadog,
             and CloudWatch alerts so your team focuses on what matters.
           </p>
@@ -126,17 +291,17 @@ export default function LandingPage() {
           <div className="border border-white/5 rounded-lg bg-white/[0.02] p-6 font-mono text-sm">
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <span className="w-2 h-2 rounded-full bg-red-500" />
+                <span className="w-2 h-2 rounded-full bg-red-500 severity-pulse-dot" />
                 <span className="text-zinc-400">P0</span>
                 <span className="text-white">API latency &gt; 5s — payments-svc</span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="w-2 h-2 rounded-full bg-red-500" />
+                <span className="w-2 h-2 rounded-full bg-red-500 severity-pulse-dot" />
                 <span className="text-zinc-400">P0</span>
                 <span className="text-white">Database connection pool exhausted</span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
+                <span className="w-2 h-2 rounded-full bg-amber-500 severity-pulse-dot-amber" />
                 <span className="text-zinc-400">P1</span>
                 <span className="text-white">Error rate spike — checkout-svc</span>
               </div>
@@ -284,19 +449,21 @@ export default function LandingPage() {
               <div className="w-2.5 h-2.5 rounded-full bg-zinc-700" />
               <span className="ml-3 text-xs text-zinc-600 font-mono">alert-triage --analyze</span>
             </div>
-            <div className="p-6 font-mono text-sm space-y-3 leading-relaxed">
-              <p className="text-zinc-600">$ Ingesting 47 alerts from 3 sources...</p>
-              <p className="text-zinc-400">  PagerDuty &nbsp;&nbsp;→ 22 alerts</p>
-              <p className="text-zinc-400">  Datadog &nbsp;&nbsp;&nbsp;&nbsp;→ 18 alerts</p>
-              <p className="text-zinc-400">  CloudWatch &nbsp;→ &nbsp;7 alerts</p>
-              <div className="h-px bg-white/5 my-4" />
-              <p className="text-emerald-400">  12 classified P0/P1 critical</p>
-              <p className="text-amber-400"> &nbsp;8 duplicate groups → merged into 3 clusters</p>
-              <p className="text-zinc-500">  19 alerts flagged as noise (40% reduction)</p>
-              <div className="h-px bg-white/5 my-4" />
-              <p className="text-emerald-400">  5 incident summaries generated</p>
-              <p className="text-emerald-400">  Recommended actions attached</p>
-              <p className="text-zinc-600">$ Done in 2.3s</p>
+            <div className="p-6 font-mono text-sm leading-relaxed">
+              <TerminalTyping
+                typingSpeed={16}
+                lines={[
+                  { text: '$ Ingesting 47 alerts from 3 sources...', className: 'text-zinc-600' },
+                  { text: '  PagerDuty  → 22 alerts', className: 'text-zinc-400 mt-2' },
+                  { text: '  Datadog    → 18 alerts', className: 'text-zinc-400' },
+                  { text: '  CloudWatch →  7 alerts', className: 'text-zinc-400' },
+                  { text: '  12 classified P0/P1 critical', className: 'text-emerald-400 mt-4' },
+                  { text: '  8 duplicate groups → merged into 3 clusters', className: 'text-amber-400' },
+                  { text: '  19 alerts flagged as noise (40% reduction)', className: 'text-zinc-500' },
+                  { text: '  5 incident summaries generated', className: 'text-emerald-400 mt-4' },
+                  { text: '  Recommended actions attached', className: 'text-emerald-400' },
+                ]}
+              />
             </div>
           </div>
         </div>
@@ -309,21 +476,30 @@ export default function LandingPage() {
             Trusted by SRE teams
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { value: '60%', label: 'noise reduction' },
-              { value: '2.3s', label: 'avg triage time' },
-              { value: '3x', label: 'faster MTTR' },
-              { value: '47→3', label: 'alert compression' },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <p className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-mono">
-                  {stat.value}
-                </p>
-                <p className="mt-2 text-xs uppercase tracking-[0.15em] text-zinc-600">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
+            <div className="text-center">
+              <p className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-mono">
+                <AnimatedCounter value={60} suffix="%" />
+              </p>
+              <p className="mt-2 text-xs uppercase tracking-[0.15em] text-zinc-600">noise reduction</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-mono">
+                <AnimatedCounter value={2} suffix=".3s" />
+              </p>
+              <p className="mt-2 text-xs uppercase tracking-[0.15em] text-zinc-600">avg triage time</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-mono">
+                <AnimatedCounter value={3} suffix="x" />
+              </p>
+              <p className="mt-2 text-xs uppercase tracking-[0.15em] text-zinc-600">faster MTTR</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-mono">
+                47&rarr;<AnimatedCounter value={3} />
+              </p>
+              <p className="mt-2 text-xs uppercase tracking-[0.15em] text-zinc-600">alert compression</p>
+            </div>
           </div>
         </div>
       </FadeSection>

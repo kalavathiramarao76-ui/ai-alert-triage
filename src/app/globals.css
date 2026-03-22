@@ -346,6 +346,68 @@ html[data-theme="light"] .cmd-palette-enter {
   background-size: 256px 256px;
 }
 
+/* ── Letter-by-letter reveal ── */
+.letter-reveal-char {
+  display: inline-block;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+/* ── Hero subtitle fade in ── */
+.hero-subtitle {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: heroSubtitleIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
+}
+@keyframes heroSubtitleIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Terminal cursor ── */
+@keyframes termBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.terminal-cursor {
+  animation: termBlink 1s step-end infinite;
+}
+
+/* ── Severity pulse dots ── */
+@keyframes sevPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0); }
+}
+.severity-pulse-dot {
+  animation: sevPulse 2s ease-in-out infinite;
+}
+
+@keyframes sevPulseAmber {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0); }
+}
+.severity-pulse-dot-amber {
+  animation: sevPulseAmber 2s ease-in-out infinite;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .letter-reveal-char {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .hero-subtitle {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .terminal-cursor,
+  .severity-pulse-dot,
+  .severity-pulse-dot-amber {
+    animation: none !important;
+  }
+}
+
 /* ── Landing page scroll fade ── */
 .fade-section {
   opacity: 0;
