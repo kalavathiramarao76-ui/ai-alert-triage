@@ -65,6 +65,14 @@ export default function TriagePage() {
         body: JSON.stringify({ alerts: selectedAlerts }),
       });
 
+      if (response.status === 429) {
+        const errorData = await response.json();
+        if (errorData.error === 'FREE_LIMIT_REACHED') {
+          window.dispatchEvent(new CustomEvent('usage-changed', { detail: errorData.count }));
+          return;
+        }
+      }
+
       const data = await response.json();
       if (data.incident) {
         const incident = {
