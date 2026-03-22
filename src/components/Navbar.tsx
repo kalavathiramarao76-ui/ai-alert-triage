@@ -7,6 +7,7 @@ import ThemeToggle from './ThemeToggle';
 import NotificationCenter from './NotificationCenter';
 import { CommandPaletteTrigger } from './CommandPalette';
 import { favorites } from '@/lib/favorites';
+import { UserMenu } from './AuthGate';
 
 const navItems = [
   { href: '/app', label: 'Dashboard', icon: '◈' },
@@ -68,6 +69,7 @@ export default function Navbar() {
             <CommandPaletteTrigger />
             <NotificationCenter />
             <ThemeToggle />
+            <UserMenu />
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               <span className="text-xs text-green-400 font-medium">AI Online</span>

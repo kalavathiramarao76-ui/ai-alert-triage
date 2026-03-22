@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { RawAlert, TriagedAlert, AlertGroup } from '@/types';
 import { storage } from '@/lib/storage';
+import { incrementUsage } from '@/lib/usage';
 import { analytics } from '@/lib/analytics';
 import { generateMockMetrics } from '@/lib/mock-data';
 import AlertInbox from '@/components/AlertInbox';
@@ -118,6 +119,7 @@ export default function DashboardPage() {
 
       storage.addTriagedAlerts(triagedAlerts);
       storage.addGroups(newGroups);
+      incrementUsage();
 
       const triageTimeMs = Date.now() - triageStart;
       const categories = triagedAlerts.map((a) => a.category || 'app');

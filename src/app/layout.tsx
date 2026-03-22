@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { AuthGate } from "@/components/AuthGate";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -97,7 +98,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased font-[family-name:var(--font-geist-sans)] bg-zinc-950 text-zinc-100`}>
-        {children}
+        <AuthGate>{children}</AuthGate>
       </body>
     </html>
   );
